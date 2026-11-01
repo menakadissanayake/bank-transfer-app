@@ -2,7 +2,7 @@ package com.example.bankapp.repository;
 
 import com.example.bankapp.model.BankTransaction;
 import com.example.bankapp.model.TransactionStatus;
-
+import java.math.BigDecimal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,4 +30,18 @@ public interface BankTransactionRepository
     @Query("SELECT COUNT(t) FROM BankTransaction t WHERE t.status = :status")
     long countByStatus(
             @Param("status") TransactionStatus status);
-}
+
+    @Query("SELECT t FROM BankTransaction t " +
+            "WHERE t.status = com.example.bankapp.model.TransactionStatus.SUCCESS " +
+            "AND t.amount >= :minAmount " +
+            "ORDER BY t.amount DESC")
+    List<BankTransaction> findLargeTransfers(
+            @Param("minAmount") BigDecimal minAmount);
+
+        @Query("SELECT COALESCE(SUM(t.amount), 0) " +
+       "FROM BankTransaction t " +
+       "WHERE t.fromAccount = :account " +
+       "AND t.status = com.example.bankapp.model.TransactionStatus.SUCCESS")
+BigDecimal getTotalSentByAccount(
+        @Param("account") String account);
+        }

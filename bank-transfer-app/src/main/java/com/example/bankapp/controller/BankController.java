@@ -8,7 +8,7 @@ import com.example.bankapp.service.TransactionAuditService;
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
-
+import java.math.BigDecimal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -132,6 +132,56 @@ public class BankController {
         model.addAttribute("transactions",
                 bankService.getAccountHistory(accountNumber));
 
+        model.addAttribute("totalSent",
+                bankService.getTotalSentByAccount(accountNumber));
+
         return "history";
     }
+
+    @GetMapping("/large-transfers")
+    public String largeTransfers(
+            @RequestParam(defaultValue = "10000") BigDecimal min,
+            Model model) {
+
+        model.addAttribute("minAmount", min);
+        model.addAttribute("transactions",
+                bankService.getLargeTransfers(min));
+
+        return "large-transfers";
+    }
+
+    @PostMapping("/deposit")
+    public String deposit(
+            @RequestParam String accountNumber,
+            @RequestParam BigDecimal amount,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            bankService.deposit(accountNumber, amount);
+            redirectAttributes.addFlashAttribute(
+                    "successMessage", "Deposit completed successfully");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage", e.getMessage());
+        }
+
+        return "redirect:/";
+    }
+@PostMapping("/withdraw")
+public String withdraw(
+        @RequestParam String accountNumber,
+        @RequestParam BigDecimal amount,
+        RedirectAttributes redirectAttributes) {
+
+    try {
+        bankService.withdraw(accountNumber, amount);
+        redirectAttributes.addFlashAttribute(
+                "successMessage", "Withdrawal completed successfully");
+    } catch (RuntimeException e) {
+        redirectAttributes.addFlashAttribute(
+                "errorMessage", e.getMessage());
+    }
+
+    return "redirect:/";
+}
 }

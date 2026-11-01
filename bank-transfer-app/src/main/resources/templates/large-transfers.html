@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Large Transfers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f4f6f9;
+        }
+
+        h1 {
+            color: #243b55;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #243b55;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Large Transfers</h1>
+
+<form th:action="@{/large-transfers}" method="get">
+    <label>Minimum amount (LKR):</label>
+    <input type="number" name="min" min="0.01"
+           step="0.01" th:value="${min}" required>
+    <button type="submit">Search</button>
+</form>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>From Account</th>
+        <th>To Account</th>
+        <th>Amount (LKR)</th>
+        <th>Status</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="transaction : ${transfers}">
+        <td th:text="${transaction.id}"></td>
+        <td th:text="${transaction.fromAccount}"></td>
+        <td th:text="${transaction.toAccount}"></td>
+        <td th:text="${transaction.amount}"></td>
+        <td th:text="${transaction.status}"></td>
+        <td th:text="${transaction.description}"></td>
+    </tr>
+
+    <tr th:if="${#lists.isEmpty(transfers)}">
+        <td colspan="6">No large transfers found.</td>
+    </tr>
+    </tbody>
+</table>
+
+<br>
+<a th:href="@{/}">Back to Home</a>
+
+</body>
+</html>

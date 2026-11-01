@@ -40,8 +40,14 @@ public class DataLoader {
                         "saman@example.com",
                         new BigDecimal("10000.00"));
 
+                Customer bankAccount = new Customer(
+                        "999999",
+                        "Bank Fee Account",
+                        "bankfees@example.com",
+                        new BigDecimal("0.00"));
+
                 customerRepository.saveAll(
-                        List.of(customer1, customer2, customer3));
+                        List.of(customer1, customer2, customer3,bankAccount));
 
                 System.out.println("Sample customers inserted successfully!");
             } else {
